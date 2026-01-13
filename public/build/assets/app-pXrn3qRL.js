@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){var e=document.querySelector(".mobile-menu-button"),n=document.querySelector(".mobile-menu");e&&n&&e.addEventListener("click",function(){n.classList.toggle("hidden")})});
