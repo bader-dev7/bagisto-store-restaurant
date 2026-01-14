@@ -5,7 +5,9 @@
 ])
 
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ core()->getCurrentLocale()->direction }}">
+<html lang="{{ app()->getLocale() }}"
+      dir="{{ core()->getCurrentLocale()->direction }}"
+      data-theme="dark"> {{-- سيتم تحديثه بالـ JS --}}
 <head>
     <title>{{ $title ?? (core()->getCurrentChannel()->home_seo['meta_title'] ?? 'Restaurant') }}</title>
 
@@ -15,136 +17,198 @@
 
     @stack('meta')
 
-    <link
-        rel="icon"
-        sizes="16x16"
-        href="{{ core()->getCurrentChannel()->favicon_url ?? bagisto_asset('images/favicon.ico') }}"
-    />
+    <link rel="icon" sizes="16x16"
+          href="{{ core()->getCurrentChannel()->favicon_url ?? bagisto_asset('images/favicon.ico') }}" />
 
     @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
-
     @stack('styles')
 
     <style>
-        :root{
-            --bg: #0b0f14;
-            --surface: rgba(255,255,255,.06);
-            --card: rgba(255,255,255,.08);
-            --border: rgba(255,255,255,.12);
-            --text: #f8fafc;
-            --muted: rgba(248,250,252,.72);
-            --muted2: rgba(248,250,252,.55);
-            --accent: #f59e0b; /* amber */
-            --accent2: #ef4444; /* red */
-            --shadow: 0 14px 50px rgba(0,0,0,.35);
+        /* =========================================================
+           Theme Tokens
+           NOTE:
+           - data-theme="dark"  => Light background + BLACK text (as requested)
+           - data-theme="light" => Dark background  + WHITE text (as requested)
+        ========================================================== */
+
+        :root {
             --radius: 18px;
             --radius2: 14px;
             --max: 1180px;
+
+            --accent: #f59e0b;
+            --accent2: #ef4444;
+
+            --transition: .18s ease;
         }
 
-        *{ box-sizing:border-box; }
-        body{
-            margin:0;
+        /* DARK (Requested: black text) => light UI */
+        html[data-theme="dark"] {
+            --bg: #f7f7f8;
+            --text: #0b0f14;
+            --muted: rgba(11,15,20,.68);
+            --muted2: rgba(11,15,20,.52);
+
+            --surface: rgba(255,255,255,.85);
+            --card: rgba(255,255,255,.92);
+            --border: rgba(15,23,42,.12);
+
+            --header-bg: rgba(255,255,255,.75);
+
+            --glass-bg1: rgba(255,255,255,.85);
+            --glass-bg2: rgba(255,255,255,.65);
+
+            --shadow: 0 16px 45px rgba(2,6,23,.12);
+
+            --grad1: rgba(245,158,11,.18);
+            --grad2: rgba(239,68,68,.14);
+        }
+
+        /* LIGHT (Requested: white text) => dark UI */
+        html[data-theme="light"] {
+            --bg: #0b0f14;
+            --text: #f8fafc;
+            --muted: rgba(248,250,252,.72);
+            --muted2: rgba(248,250,252,.55);
+
+            --surface: rgba(255,255,255,.06);
+            --card: rgba(255,255,255,.08);
+            --border: rgba(255,255,255,.12);
+
+            --header-bg: rgba(11,15,20,.55);
+
+            --glass-bg1: rgba(255,255,255,.08);
+            --glass-bg2: rgba(255,255,255,.05);
+
+            --shadow: 0 14px 50px rgba(0,0,0,.35);
+
+            --grad1: rgba(245,158,11,.22);
+            --grad2: rgba(239,68,68,.18);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-            background: radial-gradient(1200px 600px at 20% -10%, rgba(245,158,11,.22), transparent 60%),
-                        radial-gradient(900px 500px at 90% 10%, rgba(239,68,68,.18), transparent 60%),
-                        var(--bg);
+            background:
+                radial-gradient(1200px 600px at 20% -10%, var(--grad1), transparent 60%),
+                radial-gradient(900px 500px at 90% 10%, var(--grad2), transparent 60%),
+                var(--bg);
             color: var(--text);
+            transition: background var(--transition), color var(--transition);
         }
 
-        a{ color:inherit; }
-        .container{ max-width: var(--max); margin:0 auto; padding: 18px 16px; }
-        .glass{
-            background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+        a { color: inherit; }
+        .container { max-width: var(--max); margin: 0 auto; padding: 18px 16px; }
+
+        /* Glass / Cards */
+        .glass {
+            background: linear-gradient(180deg, var(--glass-bg1), var(--glass-bg2));
             border: 1px solid var(--border);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             backdrop-filter: blur(10px);
         }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+        }
 
         /* Header */
-        .header{
+        .header {
             position: sticky;
             top: 0;
             z-index: 50;
-            background: rgba(11,15,20,.55);
+            background: var(--header-bg);
             backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(255,255,255,.08);
+            border-bottom: 1px solid var(--border);
         }
-        .header-inner{
+        .header-inner {
             display:flex; align-items:center; justify-content:space-between;
             gap: 14px;
         }
-        .brand{
+        .brand {
             display:flex; align-items:center; gap:10px;
             font-weight: 800;
             letter-spacing: .2px;
             white-space: nowrap;
         }
-        .logo-dot{
-            width: 10px; height:10px; border-radius: 999px;
+        .logo-dot {
+            width: 10px; height: 10px; border-radius: 999px;
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             box-shadow: 0 0 0 6px rgba(245,158,11,.12);
         }
 
-        .nav{
+        .nav {
             display:flex; align-items:center; gap: 10px;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
-        .nav a{
+        .nav a {
             text-decoration:none;
             padding: 10px 12px;
             border-radius: 999px;
             color: var(--muted);
             border: 1px solid transparent;
-            transition: .2s ease;
+            transition: var(--transition);
             font-size: 14px;
         }
-        .nav a:hover{
+        .nav a:hover {
             color: var(--text);
-            background: rgba(255,255,255,.06);
-            border-color: rgba(255,255,255,.10);
+            background: var(--surface);
+            border-color: var(--border);
         }
 
-        .btn{
+        .btn {
             display:inline-flex; align-items:center; justify-content:center;
             gap: 8px;
             padding: 10px 14px;
             border-radius: 999px;
-            border: 1px solid rgba(255,255,255,.14);
-            background: rgba(255,255,255,.06);
+            border: 1px solid var(--border);
+            background: var(--surface);
             color: var(--text);
             text-decoration:none;
-            transition: .2s ease;
+            transition: var(--transition);
             font-size: 14px;
             white-space: nowrap;
         }
-        .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); }
-        .btn.primary{
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+
+        .btn.primary {
             border-color: rgba(245,158,11,.35);
             background: linear-gradient(135deg, rgba(245,158,11,.95), rgba(239,68,68,.95));
-            color: #0b0f14;
+            color: #0b0f14; /* ثابت لأنه زر ملون */
             font-weight: 800;
         }
-        .btn.primary:hover{ filter: brightness(1.05); }
+
+        /* Theme toggle button */
+        .theme-toggle{
+            padding: 9px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover{ filter: brightness(1.05); transform: translateY(-1px); }
 
         /* Hero */
-        .hero{
-            padding: 26px 0 16px;
-        }
-        .hero-wrap{
-            position: relative;
-            overflow: hidden;
-        }
+        .hero { padding: 26px 0 16px; }
+        .hero-wrap { position: relative; overflow: hidden; }
         .hero-wrap::before{
             content:"";
             position:absolute; inset:-60px;
             background:
-                radial-gradient(900px 400px at 15% 25%, rgba(245,158,11,.32), transparent 60%),
-                radial-gradient(700px 380px at 85% 30%, rgba(239,68,68,.26), transparent 55%),
-                linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+                radial-gradient(900px 400px at 15% 25%, rgba(245,158,11,.22), transparent 60%),
+                radial-gradient(700px 380px at 85% 30%, rgba(239,68,68,.18), transparent 55%),
+                linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.00));
             transform: rotate(-2deg);
+            opacity: .9;
+            pointer-events: none;
         }
         .hero-inner{
             position: relative;
@@ -153,7 +217,6 @@
             gap: 18px;
             padding: 22px;
         }
-
         .hero-title{
             margin: 0 0 10px;
             font-size: clamp(24px, 3.2vw, 40px);
@@ -167,32 +230,25 @@
             max-width: 56ch;
         }
 
-        .hero-actions{
-            display:flex; gap: 10px; flex-wrap: wrap;
-            margin-top: 8px;
-        }
-
-        .badges{
-            display:flex; gap: 10px; flex-wrap: wrap;
-            margin-top: 14px;
-        }
+        .hero-actions{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+        .badges{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
         .badge{
             display:flex; align-items:center; gap: 8px;
             padding: 10px 12px;
             border-radius: 999px;
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.10);
+            background: var(--surface);
+            border: 1px solid var(--border);
             color: var(--muted);
             font-size: 13px;
         }
         .badge strong{ color: var(--text); font-weight: 800; }
 
-        /* Right hero card */
+        /* Promo */
         .promo{
             padding: 16px;
             border-radius: var(--radius2);
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.10);
+            background: var(--surface);
+            border: 1px solid var(--border);
         }
         .promo h3{ margin: 0 0 8px; font-size: 16px; }
         .promo p{ margin: 0 0 12px; color: var(--muted); font-size: 13px; }
@@ -204,24 +260,26 @@
         .mini-card{
             padding: 12px;
             border-radius: 14px;
-            border: 1px solid rgba(255,255,255,.10);
-            background: rgba(0,0,0,.18);
+            border: 1px solid var(--border);
+            background: rgba(0,0,0,.06);
         }
+        html[data-theme="light"] .mini-card{ background: rgba(0,0,0,.18); } /* عند الوضع الداكن الحقيقي */
         .mini-card .k{ color: var(--muted2); font-size: 12px; }
         .mini-card .v{ font-weight: 900; margin-top: 4px; }
 
-        /* Main content shell */
-        main{ padding: 14px 0 40px; }
+        /* Content */
+        main { padding: 14px 0 40px; }
         .content-shell{
             padding: 18px;
             border-radius: var(--radius);
-            border: 1px solid rgba(255,255,255,.10);
+            border: 1px solid var(--border);
             background: rgba(255,255,255,.04);
         }
+        html[data-theme="dark"] .content-shell{ background: rgba(255,255,255,.70); }
 
         /* Footer */
         .footer{
-            border-top: 1px solid rgba(255,255,255,.08);
+            border-top: 1px solid var(--border);
             padding: 22px 0;
             color: var(--muted);
         }
@@ -261,14 +319,17 @@
                 </div>
 
                 <nav class="nav">
+                    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">
+                        🌙
+                    </button>
+
                     <a href="{{ url('/') }}">الرئيسية</a>
                     <a href="{{ url('/restaurant/menu') }}">قائمة الطعام</a>
                     <a href="{{ url('/restaurant/branches') }}">الفروع</a>
                     <a href="{{ url('/contact') }}">اتصل بنا</a>
 
                     <a class="btn primary" href="{{ url('/restaurant/menu') }}">
-                        اطلب الآن
-                        <span aria-hidden="true">→</span>
+                        اطلب الآن <span aria-hidden="true">→</span>
                     </a>
                 </nav>
             </div>
@@ -281,6 +342,10 @@
                 <div class="hero-inner">
                     <div>
                         <h1 class="hero-title">مرحباً بكم في {{ core()->getCurrentChannel()->name ?? 'مطعمنا' }} 👋</h1>
+                        <h3 style="margin:0 0 8px; color: var(--muted);">
+                            {{ core()->getCurrentChannel()->description ?? '' }}
+                        </h3>
+
                         <p class="hero-sub">
                             أشهى الأطباق الطازجة يومياً — اطلب الآن أو تصفّح المنيو واستمتع بتجربة مميزة.
                         </p>
@@ -321,6 +386,7 @@
                             </div>
                         </div>
                     </aside>
+
                 </div>
             </div>
         </div>
@@ -360,6 +426,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </footer>
@@ -368,5 +435,32 @@
 </div>
 
 @stack('scripts')
+
+<script>
+    (function () {
+        const html = document.documentElement;
+        const toggle = document.getElementById('themeToggle');
+
+        // Default: dark (requested: black text on light background)
+        const fallback = 'dark';
+
+        function apply(theme) {
+            html.setAttribute('data-theme', theme);
+            // icon: dark => 🌙 (black text) / light => ☀️ (white text)
+            toggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+        }
+
+        const saved = localStorage.getItem('theme') || fallback;
+        apply(saved);
+
+        toggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme') || fallback;
+            const next = current === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', next);
+            apply(next);
+        });
+    })();
+</script>
+
 </body>
 </html>
