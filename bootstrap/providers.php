@@ -45,4 +45,5 @@ return [
     Webkul\User\Providers\UserServiceProvider::class,
     Webkul\CustomTheme\Providers\CustomThemeServiceProvider::class,
     Webkul\Store\Providers\StoreServiceProvider::class,
+    Webkul\RMA\Providers\RMAServiceProvider::class,
 ];

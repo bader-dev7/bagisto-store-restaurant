@@ -63,6 +63,7 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
+            "Webkul\\RMA\\": "packages/Webkul/RMA/src",
             "Webkul\\CustomTheme\\": "packages/Webkul/CustomTheme/src",
             "Webkul\\Store\\": "packages/Webkul/Store/src",
             "Database\\Seeders\\": "database/seeders/",
